@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,9 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
 // middleware customer
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::post('/orders/{order}/payment', [PaymentController::class, 'store']);
+    Route::get('/orders/{order}/payment', [PaymentController::class, 'show']);
 
     // Checkout
     Route::post('/checkout', [CheckoutController::class, 'store']);
