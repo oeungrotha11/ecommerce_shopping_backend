@@ -18,7 +18,75 @@ class AuthController extends Controller
             'users' => $users,
         ], 200);
     }
-    
+
+    public function storeUser(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'role' => 'required|in:customer,admin',
+        ]);
+
+        $validated['password'] = Hash::make($validated['password']);
+
+        $user = User::create($validated);
+
+        return response()->json([
+            'message' => 'User created successfully',
+            'user' => $user,
+        ], 201);
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:100',
+            'email' => [
+                'sometimes',
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+            'password' => 'sometimes|nullable|string|min:8|confirmed',
+            'phone' => 'sometimes|nullable|string|max:20',
+            'address' => 'sometimes|nullable|string',
+            'role' => 'sometimes|required|in:customer,admin',
+        ]);
+
+        if (array_key_exists('password', $validated)) {
+            if ($validated['password'] !== null) {
+                $validated['password'] = Hash::make($validated['password']);
+            } else {
+                unset($validated['password']);
+            }
+        }
+
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'user' => $user->fresh(),
+        ], 200);
+    }
+
+    public function destroyUser(Request $request, User $user)
+    {
+        if ($request->user()->is($user)) {
+            return response()->json([
+                'message' => 'You cannot delete your own admin account',
+            ], 422);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'User deleted successfully',
+        ], 200);
+    }
+
     public function register(Request $request)
     {
         $validated = $request->validate([
