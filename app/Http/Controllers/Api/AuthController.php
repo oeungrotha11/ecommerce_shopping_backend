@@ -6,9 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
+    public function index()
+    {
+        $users = User::all();
+
+        return response()->json([
+            'users' => $users,
+        ], 200);
+    }
+    
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -79,5 +89,46 @@ class AuthController extends Controller
         return response()->json([
             'user' => $request->user(),
         ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:100',
+            'email' => [
+                'sometimes',
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+            'phone' => 'sometimes|nullable|string|max:20',
+            'address' => 'sometimes|nullable|string',
+            'password' => 'sometimes|nullable|string|min:8|confirmed',
+        ]);
+
+        if (array_key_exists('password', $validated)) {
+            if ($validated['password'] !== null) {
+                $validated['password'] = Hash::make($validated['password']);
+            } else {
+                unset($validated['password']);
+            }
+        }
+
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => $user->fresh(),
+        ], 200);
+    }
+
+    // Fetch single user by ID
+    public function show(User $user)
+    {
+        return response()->json([
+            'user' => $user,
+        ], 200);
     }
 }

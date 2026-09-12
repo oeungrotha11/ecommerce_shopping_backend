@@ -61,6 +61,7 @@ Route::get('/product-variants/{productVariant}', [
     'show'
 ]);
 
+
 /*
 |--------------------------------------------------------------------------
 | Customer Routes
@@ -77,6 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/me', [AuthController::class, 'me']);
+    Route::put('/me', [AuthController::class, 'updateProfile']);
 
     /*
     |--------------------------------------------------------------------------
@@ -189,6 +191,9 @@ Route::middleware(['auth:sanctum', 'admin'])
     ->prefix('admin')
     ->group(function () {
 
+        Route::get('/users', [AuthController::class, 'index']);
+
+
         /*
         |--------------------------------------------------------------------------
         | Categories
@@ -253,7 +258,7 @@ Route::middleware(['auth:sanctum', 'admin'])
             SizeController::class,
             'destroy'
         ]);
-            
+
 
         /*
         |--------------------------------------------------------------------------

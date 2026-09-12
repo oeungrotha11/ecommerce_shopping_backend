@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-     public function index()
+    public function index()
     {
         $products = Product::with([
             'category',
@@ -23,26 +25,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validated = $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'required|exists:brands,id',
-
-            'code' => 'required|string|max:100|unique:products,code',
-
-            'name' => 'required|string|max:255',
-
-            'description' => 'nullable|string',
-
-            'base_price' => 'required|numeric|min:0',
-
-            'image' => 'nullable|string|max:255',
-
-            'status' => 'nullable|in:active,inactive',
-        ]);
-
-        $product = Product::create($validated);
+        $product = Product::create($request->validated());
 
         return response()->json([
             'message' => 'Product created successfully',
@@ -65,27 +50,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $validated = $request->validate([
-            'category_id' => 'sometimes|required|exists:categories,id',
-
-            'brand_id' => 'sometimes|required|exists:brands,id',
-
-            'code' => 'sometimes|required|string|max:100|unique:products,code,' . $product->id,
-
-            'name' => 'sometimes|required|string|max:255',
-
-            'description' => 'nullable|string',
-
-            'base_price' => 'sometimes|required|numeric|min:0',
-
-            'image' => 'nullable|string|max:255',
-
-            'status' => 'sometimes|in:active,inactive',
-        ]);
-
-        $product->update($validated);
+        $product->update($request->validated());
 
         return response()->json([
             'message' => 'Product updated successfully',
