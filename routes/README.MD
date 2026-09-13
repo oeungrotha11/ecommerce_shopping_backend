@@ -48,6 +48,7 @@ GET    /api/orders/{order}/payment
 <!-- ADMIN -->
 <!-- Authorization: Bearer ADMIN_TOKEN -->
 <!-- role = admin -->
+/api/admin/user
 /api/admin/categories
 /api/admin/brands
 /api/admin/sizes
@@ -60,6 +61,22 @@ GET    /api/orders/{order}/payment
 POST   /api/admin/products
 PUT    /api/admin/products/1
 DELETE /api/admin/products/1
+POST   /api/admin/product-variants
+PUT    /api/admin/product-variants/1
+
+<!-- A variant can contain multiple gallery image paths -->
+{
+  "product_id": 1,
+  "size_id": 2,
+  "color_id": 4,
+  "sku": "ZAN-TSH-001-BEI-M",
+  "stock": 10,
+  "images": [
+    "products/tshirt/beige/front.jpg",
+    "products/tshirt/beige/back.jpg",
+    "products/tshirt/beige/side.jpg"
+  ]
+}
 
 GET /api/admin/orders
 GET /api/admin/orders/1

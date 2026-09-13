@@ -38,6 +38,8 @@ class ProductVariantController extends Controller
             'stock' => 'required|integer|min:0',
 
             'image' => 'nullable|string|max:255',
+            'images' => 'nullable|array',
+            'images.*' => 'string|max:255',
         ]);
 
         $variant = ProductVariant::create($validated);
@@ -86,6 +88,8 @@ class ProductVariantController extends Controller
             'stock' => 'sometimes|required|integer|min:0',
 
             'image' => 'nullable|string|max:255',
+            'images' => 'nullable|array',
+            'images.*' => 'string|max:255',
         ]);
 
         $productVariant->update($validated);

@@ -18,11 +18,13 @@ class ProductVariant extends Model
         'price',
         'stock',
         'image',
+        'images',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'stock' => 'integer',
+        'images' => 'array',
     ];
 
     public function product(): BelongsTo
