@@ -36,9 +36,6 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
 
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/categories/{category}', [CategoryController::class, 'show']);
-
 Route::get('/brands', [BrandController::class, 'index']);
 Route::get('/brands/{brand}', [BrandController::class, 'show']);
 
