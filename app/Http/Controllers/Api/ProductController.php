@@ -10,14 +10,51 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with([
+        $query = Product::with([
             'category',
             'brand',
             'variants.size',
             'variants.color',
-        ])->latest()->get();
+        ]);
+
+        // Search by product name or code
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by category
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // Filter by brand
+        if ($request->filled('brand_id')) {
+            $query->where('brand_id', $request->brand_id);
+        }
+
+        // Filter by minimum price
+        if ($request->filled('min_price')) {
+            $query->where('base_price', '>=', $request->min_price);
+        }
+
+        // Filter by maximum price
+        if ($request->filled('max_price')) {
+            $query->where('base_price', '<=', $request->max_price);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $products = $query->latest()->get();
 
         return response()->json([
             'message' => 'Products retrieved successfully',
