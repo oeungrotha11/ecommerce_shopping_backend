@@ -175,6 +175,7 @@ Route::middleware('auth:sanctum')->group(function () {
         PaymentController::class,
         'show'
     ]);
+    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel']);
 });
 
 
